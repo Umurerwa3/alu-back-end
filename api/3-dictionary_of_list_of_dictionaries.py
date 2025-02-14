@@ -1,28 +1,29 @@
 #!/usr/bin/python3
-// Regex for Currency Amounts
-rts data in the JSON format"""
+"""
+fetches data from an API
+and exports it to a JSON file
+"""
 
-if __name__ == "__main__":
+import json
+import requests
 
-    import json
-    import requests
-    import sys
-
-    users = requests.get("https://jsonplaceholder.typicode.com/users")
-    users = users.json()
-    todos = requests.get('https://jsonplaceholder.typicode.com/todos')
-    todos = todos.json()
-    todoAll = {}
-
+if __name__ == '__main__':
+    users = requests.get("https://jsonplaceholder.typicode.com/users",
+                         verify=False).json()
+    userdict = {}
+    usernamedict = {}
     for user in users:
-        taskList = []
-        for task in todos:
-            if task.get('userId') == user.get('id'):
-                taskDict = {"username": user.get('username'),
-                            "task": task.get('title'),
-                            "completed": task.get('completed')}
-                taskList.append(taskDict)
-        todoAll[user.get('id')] = taskList
-
-    with open('todo_all_employees.json', mode='w') as f:
-        json.dump(todoAll, f)
+        uid = user.get("id")
+        userdict[uid] = []
+        usernamedict[uid] = user.get("username")
+    todo = requests.get("https://jsonplaceholder.typicode.com/todos",
+                        verify=False).json()
+    for task in todo:
+        taskdict = {}
+        uid = task.get("userId")
+        taskdict["task"] = task.get('title')
+        taskdict["completed"] = task.get('completed')
+        taskdict["username"] = usernamedict.get(uid)
+        userdict.get(uid).append(taskdict)
+    with open("todo_all_employees.json", 'w') as jsonfile:
+        json.dump(userdict, jsonfile)
