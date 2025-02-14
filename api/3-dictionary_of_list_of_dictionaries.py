@@ -1,4 +1,4 @@
-
+#!/usr/bin/python3
 // Regex for Currency Amounts
 rts data in the JSON format"""
 
